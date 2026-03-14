@@ -1,18 +1,5 @@
-                                      lhcguestbook
 
-
-一、推荐编辑 README.md 的软件
-你可以用以下任意一种工具来编辑，都非常适合写 Markdown：
-VS Code（免费、跨平台，最推荐）
-安装 Markdown 插件（如 Markdown All in One），可以实时预览、语法高亮、一键格式化。
-直接打开项目里的 README.md，写完后 Ctrl+S 保存即可。
-Typora（所见即所得，直观易用）
-可视化编辑，写完就是最终渲染效果，适合新手。
-GitHub 网页端（无需安装软件，直接在线改）
-打开你的仓库 https://github.com/lihongcheng1977/lhcguestbook → 点击 README.md → 点击 ✏️ 编辑按钮，直接在线写，写完提交即可。
-二、完整可直接使用的 README.md 内容
-下面是已经帮你写好、包含图片引用的完整版本，你可以直接复制到 README.md 文件里：
-markdown
+                                   LHCguestbook级留言板
 # 轻量级留言板（Docker一键部署版）
 基于 Flask + SQLite + Docker 的极简留言板系统，支持邮件通知、后台可视化配置、留言管理，开箱即用，适合个人站点或小型场景使用。
 
@@ -20,14 +7,14 @@ markdown
 
 ## ✨ 项目展示
 ### 前台留言页面
-![前台留言页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/你的前台页面截图文件名.png)
+![前台留言页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/index_page.png)
 
 - 简洁的留言提交界面，包含姓名和留言内容输入框
 - 实时展示历史留言列表，带时间戳
 - 防重复提交设计，刷新页面不会重复发送邮件
 
 ### 后台管理页面
-![后台管理页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/你的后台页面截图文件名.png)
+![后台管理页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/admin_page.png)
 
 - 可视化配置面板，支持修改页面标题、管理员密码、邮箱配置等
 - 局部更新机制：无需修改全部配置，仅填写需要变更的项即可
@@ -104,6 +91,8 @@ lhcguestbook/
 │   ├── index.html         # 前台留言页面
 │   ├── admin.html         # 后台管理页面
 │   └── login.html         # 后台登录页面
+├── index_page.png         # 前台页面截图
+├── admin_page.png         # 后台页面截图
 └── README.md              # 项目说明文档
 🛠️ 常见问题
 1. 无法访问页面？
@@ -123,20 +112,3 @@ v1.0：初始版本，支持留言提交、邮件通知、后台配置管理、D
 本项目采用 MIT 协议开源，可自由使用、修改和分发。
 🤝 贡献
 欢迎提交 Issue 或 Pull Request 来完善项目！
-plaintext
-
-### 三、关于图片引用的说明
-1.  把你这两张截图分别命名为：
-    - 前台页：`index_page.png`
-    - 后台页：`admin_page.png`
-2.  把这两张图片放到项目根目录（和 `app.py` 同级）
-3.  把上面 README 里的图片链接替换成：
-    ```markdown
-    ![前台留言页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/index_page.png)
-    ![后台管理页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/admin_page.png)
-把图片和 README 一起提交到 GitHub：
-bash
-运行
-git add .
-git commit -m "添加README和页面截图"
-git push origin main
