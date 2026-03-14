@@ -1,28 +1,25 @@
-
-                                   LHCguestbook级留言板
-# 轻量级留言板（Docker一键部署版）
-基于 Flask + SQLite + Docker 的极简留言板系统，支持邮件通知、后台可视化配置、留言管理，开箱即用，适合个人站点或小型场景使用。
-
+# lhcguestbook轻量级留言板
+# （Docker一键部署版）
+基于 Flask + SQLite + Docker 的极简留言板系统，支持邮件通知、后台可视化配置、留言管理，
+场景使用。
 ---
 
 ## ✨ 项目展示
 ### 前台留言页面
-![前台留言页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/index_page.png)
+![前台留言页面](https://github.com/lihongcheng1977/lhcguestbook/blob/main/index_page.png)
 
 - 简洁的留言提交界面，包含姓名和留言内容输入框
 - 实时展示历史留言列表，带时间戳
 - 防重复提交设计，刷新页面不会重复发送邮件
 
 ### 后台管理页面
-![后台管理页面](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/admin_page.png)
+![后台管理页面](https://github.com/lihongcheng1977/lhcguestbook/blob/main/admin_page.png)
 
 - 可视化配置面板，支持修改页面标题、管理员密码、邮箱配置等
 - 局部更新机制：无需修改全部配置，仅填写需要变更的项即可
 - 留言管理：支持查看邮件发送日志、删除无用留言
 - 安全机制：1分钟无操作自动登出，保护后台权限
-
 ---
-
 ## 🚀 功能特性
 | 功能 | 说明 |
 |------|------|
@@ -33,7 +30,6 @@
 | 防重复提交 | 采用PRG模式，刷新页面不会重复发送邮件 |
 | 数据持久化 | 支持挂载配置文件和数据库，容器重启数据不丢失 |
 | 安全防护 | 1分钟无操作自动登出，密码/授权码输入框隐藏显示 |
-
 ---
 
 ## 📦 快速部署（Docker 推荐）
@@ -42,6 +38,7 @@
 # 1. 拉取最新镜像
 docker pull wwwlhc/lhcguestbook:latest
 
+
 # 2. 启动容器（持久化配置+数据库，避免数据丢失）
 docker run -d \
   -p 8898:5000 \
@@ -49,24 +46,29 @@ docker run -d \
   -v /你的本地路径/config.json:/app/config.json \
   -v /你的本地路径/messages.db:/app/messages.db \
   wwwlhc/lhcguestbook:latest
-方式 2：从源码构建
+```
+### 方式 2：从源码构建
 bash
 运行
 # 1. 克隆代码
 git clone https://github.com/lihongcheng1977/lhcguestbook.git
 cd lhcguestbook
 
+
 # 2. 构建镜像
 docker build -t lhcguestbook:latest .
 
+
 # 3. 启动容器
 docker run -d -p 8898:5000 --name lhcguestbook lhcguestbook:latest
+```
 🔗 访问地址
 启动容器后，通过以下地址访问：
 前台留言页：http://你的服务器IP:8898
 后台登录页：http://你的服务器IP:8898/login
 初始管理员密码：123456（建议登录后立即修改）
 后台管理页：登录后自动跳转，可修改配置、管理留言
+```
 ⚙️ 配置说明
 邮箱配置（以 QQ 邮箱为例）
 在后台管理页填写以下信息，即可开启邮件通知：
@@ -79,6 +81,7 @@ SMTP 端口：465
 所有输入框默认加载当前配置，不修改请留空
 仅填写需要变更的项，点击「保存配置」即可生效
 端口号仅允许数字，邮箱地址必须包含 @ 符号
+```
 📂 项目结构
 plaintext
 lhcguestbook/
@@ -94,6 +97,7 @@ lhcguestbook/
 ├── index_page.png         # 前台页面截图
 ├── admin_page.png         # 后台页面截图
 └── README.md              # 项目说明文档
+```
 🛠️ 常见问题
 1. 无法访问页面？
 检查 Docker 端口映射是否正确：docker ps
@@ -112,3 +116,22 @@ v1.0：初始版本，支持留言提交、邮件通知、后台配置管理、D
 本项目采用 MIT 协议开源，可自由使用、修改和分发。
 🤝 贡献
 欢迎提交 Issue 或 Pull Request 来完善项目！
+plaintext
+
+
+### 上传到 GitHub 的操作步骤（一键执行）
+1. 在本地项目根目录新建 `README.md` 文件，粘贴上述全部内容；
+2. 打开终端执行以下命令提交：
+   ```bash
+   # 添加文件到Git
+   git add README.md
+   # 提交修改
+   git commit -m "完善README文档，添加项目展示和使用说明"
+   # 推送到GitHub
+   git push origin main
+验证效果
+提交完成后，打开你的 GitHub 仓库地址 https://github.com/lihongcheng1977/lhcguestbook，即
+带图片的「项目展示」板块，图片正常显示；
+清晰的部署教程、功能说明、常见问题等内容；
+他人可直接根据文档拉取镜像部署，无需额外配置。
+这份 README 包含了开源项目所需的全部核心信息，格式规范、内容完整，可直接作为最终版本使用
