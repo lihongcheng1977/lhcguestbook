@@ -130,7 +130,7 @@ plaintext
    # 推送到GitHub
    git push origin main
 验证效果
-提交完成后，打开你的 GitHub 仓库地址 https://github.com/lihongcheng1977/lhcguestbook，即
+提交完成后，打开你的 GitHub 仓库地址 https://github.com/lihongcheng1977/lhcguestbook
 带图片的「项目展示」板块，图片正常显示；
 清晰的部署教程、功能说明、常见问题等内容；
 他人可直接根据文档拉取镜像部署，无需额外配置。
