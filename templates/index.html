@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <style>
+        /* 修复LOGO位置：居中显示 */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        /* 修复留言框高度：默认3行 */
+        #content {
+            min-height: 80px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ title }}</h1>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="flash">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- 留言表单 -->
+        <div class="card">
+            <form method="post" id="messageForm">
+                <div class="form-group">
+                    <label for="name">您的昵称（选填）</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="请输入昵称">
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">留言内容（必填）</label>
+                    <!-- 20个表情 -->
+                    <div class="emoji-panel">
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😂')">😂</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😍')">😍</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😎')">😎</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😜')">😜</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😝')">😝</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😡')">😡</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😢')">😢</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('👍')">👍</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🎉')">🎉</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('👏')">👏</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🙌')">🙌</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🤝')">🤝</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('✨')">✨</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('💯')">💯</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🌈')">🌈</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🍻')">🍻</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🎁')">🎁</button>
+                    </div>
+                    <!-- 默认3行高度 -->
+                    <textarea id="content" name="content" class="form-control" rows="3" placeholder="支持Markdown格式，可输入表情符号" required></textarea>
+                </div>
+                
+                <!-- 修复多图上传：彻底解决覆盖问题 -->
+                <div class="form-group">
+                    <label>上传图片（最多4张，单张≤2M）</label>
+                    <!-- 隐藏的文件选择器 -->
+                    <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;" 
+                           onchange="processSelectedFiles(this.files)">
+                    <!-- 自定义上传按钮 -->
+                    <button type="button" class="btn btn-default" onclick="document.getElementById('imageUpload').click()">
+                        选择图片
+                    </button>
+                    <!-- 图片预览区 -->
+                    <div id="uploadPreview" class="upload-preview"></div>
+                    <!-- 存储图片数据的隐藏字段（name与app.py对应） -->
+                    <input type="hidden" name="allImagesInput" id="allImagesInput">
+                    <div style="color:#999;font-size:14px;margin-top:8px;">
+                        已选 <span id="imageCount">0</span>/3 张 | 支持PNG/JPG/GIF格式
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-default">提交留言</button>
+            </form>
+        </div>
+
+        <!-- 留言列表 -->
+        <div class="messages">
+            {% if messages %}
+                {% for msg in messages %}
+                <div class="message-item">
+                    <div class="message-header">
+                        <div><strong>{{ msg.name }}</strong> {{ msg.time }}</div>
+                        <div>{{ msg.location }}</div>
+                    </div>
+                    <div class="message-content">{{ msg.content_html|safe }}</div>
+                    
+                    <!-- 显示上传的图片 -->
+                    {% if msg.images %}
+                    <div class="msg-images">
+                        {% for img in msg.images %}
+                        <div class="msg-image-item">
+                            <img src="{{ img }}" alt="留言图片" onclick="window.open('{{ img }}', '_blank')">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if msg.replies %}
+                    <div style="margin-top:10px;">
+                        <strong>管理员回复：</strong>
+                        {% for reply in msg.replies %}
+                        <div style="background:#f1f1f1;padding:8px;border-radius:4px;margin-top:5px;">
+                            {{ reply.content_html|safe }} <small style="color:#999;">{{ reply.time }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div style="margin-top:10px;">
+                        <a href="/like/{{ msg.id }}" class="btn btn-default" style="min-width:auto;">
+                            点赞 👍 ({{ msg.likes }})
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="message-item" style="text-align:center;padding:30px;">
+                    暂无留言，快来发布第一条留言吧！
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 页脚：LOGO居中 -->
+    <div class="footer">
+        {% if copyright_logo %}
+        <div style="margin-bottom:10px;">
+            <a href="{{ copyright_link or '#' }}" target="_blank">
+                <img src="{{ copyright_logo }}" alt="版权LOGO" style="width:80px;height:80px;border-radius:8px;object-fit:cover;">
+            </a>
+        </div>
+        {% endif %}
+        {{ copyright_text|safe }}
+    </div>
+
+    <script>
+        // 插入表情
+        function insertEmoji(emoji) {
+            const content = document.getElementById('content');
+            const cursorPos = content.selectionStart;
+            const text = content.value;
+            content.value = text.substring(0, cursorPos) + emoji + text.substring(cursorPos);
+            content.focus();
+            content.setSelectionRange(cursorPos + emoji.length, cursorPos + emoji.length);
+        }
+
+        // 全局存储已选择的图片数据
+        let selectedImages = [];
+        const MAX_IMAGES = 4;
+
+        // 处理选择的文件（核心修复逻辑）
+        function processSelectedFiles(files) {
+            if (!files || files.length === 0) return;
+            
+            // 转换为数组并过滤图片文件
+            const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+            
+            // 计算还能添加多少张图片
+            const remainingSlots = MAX_IMAGES - selectedImages.length;
+            const filesToAdd = imageFiles.slice(0, remainingSlots);
+            
+            // 逐个处理图片
+            filesToAdd.forEach(file => {
+                const reader = new FileReader();
+                
+                // 读取文件成功后的处理
+                reader.onload = function(e) {
+                    // 生成唯一ID（永不重复）
+                    const imageId = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    
+                    // 存储图片数据
+                    const imageData = {
+                        id: imageId,
+                        name: file.name,
+                        size: file.size,
+                        base64: e.target.result
+                    };
+                    
+                    // 添加到全局数组
+                    selectedImages.push(imageData);
+                    
+                    // 更新预览区
+                    updatePreviewArea();
+                    
+                    // 更新隐藏字段
+                    updateHiddenInput();
+                };
+                
+                // 读取文件为Base64
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 更新图片预览区
+        function updatePreviewArea() {
+            const previewContainer = document.getElementById('uploadPreview');
+            previewContainer.innerHTML = '';
+            
+            // 更新计数
+            document.getElementById('imageCount').textContent = selectedImages.length;
+            
+            // 为每张图片创建预览项
+            selectedImages.forEach(image => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.dataset.imageId = image.id;
+                
+                // 图片元素
+                const img = document.createElement('img');
+                img.src = image.base64;
+                img.alt = image.name;
+                
+                // 删除按钮
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.onclick = function() {
+                    // 从数组中移除
+                    selectedImages = selectedImages.filter(item => item.id !== image.id);
+                    // 更新预览和隐藏字段
+                    updatePreviewArea();
+                    updateHiddenInput();
+                };
+                
+                // 组装预览项
+                previewItem.appendChild(img);
+                previewItem.appendChild(deleteBtn);
+                previewContainer.appendChild(previewItem);
+            });
+        }
+
+        // 更新隐藏输入字段
+        function updateHiddenInput() {
+            // 只传递必要的数据
+            const dataToSend = selectedImages.map(img => ({
+                name: img.name,
+                base64: img.base64
+            }));
+            document.getElementById('allImagesInput').value = JSON.stringify(dataToSend);
+        }
+
+        // 表单提交后重置
+        document.getElementById('messageForm').addEventListener('submit', function() {
+            setTimeout(() => {
+                selectedImages = [];
+                updatePreviewArea();
+                updateHiddenInput();
+                document.getElementById('imageUpload').value = '';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

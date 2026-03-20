@@ -1,0 +1,13 @@
+{
+  "title": "请给LHC留个言吧!",
+  "admin_password": "pbkdf2:sha256:600000$RoKKcHvgkqmh4W5R$5533ed5fd94650ebecb1d7ed2f4f092e391916610f7249e7c4a81de0e0e0e444",
+  "smtp_server": "smtp.qq.com",
+  "smtp_port": 465,
+  "send_email": "30158878@qq.com",
+  "send_email_pwd": "mdcnkoudlqoxbjeb",
+  "recv_email": "30158878@qq.com",
+  "copyright_link": "https://github.com/lihongcheng1977/lhcguestbook",
+  "copyright_text": "© 2026 留言板 LHC 版权所有",
+  "copyright_logo": "/static/uploads/logo_1773705310.jpg",
+  "default_visible": true
+}

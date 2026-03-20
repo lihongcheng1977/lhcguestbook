@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <style>
+        /* LOGO区域右侧布局 */
+        .logo-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .logo-left {
+            flex: 1;
+            min-width: 300px;
+        }
+        .logo-right {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+        /* 开关样式优化 */
+        .switch-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .switch-item label {
+            font-weight: normal;
+            margin: 0;
+        }
+        .switch-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .switch-desc {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0;flex-wrap:wrap;">
+            <h1 style="margin:0;">{{ title }}</h1>
+            <div>
+                <a href="/logout" class="btn btn-default">退出登录</a>
+                <a href="/" class="btn btn-default" target="_blank">前台预览</a>
+            </div>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="flash">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- 系统配置 -->
+        <div class="card">
+            <h2 style="margin-bottom:20px;">系统配置</h2>
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" name="save_config" value="1">
+                
+                <div class="form-group">
+                    <label for="title">网站标题</label>
+                    <input type="text" id="title" name="title" class="form-control" value="{{ config.title }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>邮件配置（QQ邮箱为例）</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                        <div>
+                            <label for="smtp_server">SMTP服务器</label>
+                            <input type="text" id="smtp_server" name="smtp_server" class="form-control" value="{{ config.smtp_server }}" placeholder="smtp.qq.com">
+                        </div>
+                        <div>
+                            <label for="smtp_port">SMTP端口</label>
+                            <input type="number" id="smtp_port" name="smtp_port" class="form-control" value="{{ config.smtp_port }}" placeholder="465">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                        <div>
+                            <label for="send_email">发送邮箱</label>
+                            <input type="email" id="send_email" name="send_email" class="form-control" value="{{ config.send_email }}" placeholder="your@qq.com">
+                        </div>
+                        <div>
+                            <label for="send_email_pwd">邮箱授权码</label>
+                            <input type="text" id="send_email_pwd" name="send_email_pwd" class="form-control" value="{{ config.send_email_pwd }}" placeholder="授权码而非登录密码">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="recv_email">接收通知邮箱</label>
+                        <input type="email" id="recv_email" name="recv_email" class="form-control" value="{{ config.recv_email }}" placeholder="接收通知的邮箱">
+                    </div>
+                </div>
+                
+                <!-- LOGO区域：左侧上传，右侧默认可见开关 -->
+                <div class="logo-section">
+                    <div class="logo-left">
+                        <label>版权LOGO（自动压缩为200×200正方形）</label>
+                        <input type="file" name="copyright_logo" accept="image/*">
+                        {% if config.copyright_logo %}
+                        <div style="margin-top:10px;">
+                            <img src="{{ config.copyright_logo }}" alt="当前LOGO" style="width:80px;height:80px;border-radius:8px;object-fit:cover;">
+                        </div>
+                        {% endif %}
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                            <div>
+                                <label for="copyright_link">LOGO链接</label>
+                                <input type="text" id="copyright_link" name="copyright_link" class="form-control" value="{{ config.copyright_link }}" placeholder="https://xxx.com">
+                            </div>
+                            <div>
+                                <label for="copyright_text">版权文字</label>
+                                <input type="text" id="copyright_text" name="copyright_text" class="form-control" value="{{ config.copyright_text }}" placeholder="© 2026 版权所有">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="logo-right">
+                        <h3 style="margin-bottom:15px;">前台显示控制</h3>
+                        <div class="switch-item">
+                            <!-- 修复：checkbox一次保存生效 -->
+                            <input type="checkbox" id="default_visible" name="default_visible" 
+                                   {% if config.default_visible %}checked{% endif %}>
+                            <label for="default_visible">新留言默认前台可见</label>
+                        </div>
+                        <div class="switch-desc">
+                            ✅ 勾选：新提交的留言自动在前台显示（无需手动审核）<br>
+                            ❌ 不勾选：新提交的留言默认隐藏，需管理员手动审核后显示<br>
+                            ⚠️ 此设置仅对勾选后的新留言生效，不影响已有留言状态
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-default" style="margin-top:20px;">保存配置</button>
+            </form>
+            
+            <!-- 修改密码 -->
+            <form method="post" action="/admin/change_pwd" style="margin-top:20px;">
+                <h3 style="margin-bottom:10px;">修改管理员密码</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+                    <div>
+                        <label for="old_pwd">旧密码</label>
+                        <input type="password" id="old_pwd" name="old_pwd" class="form-control" required>
+                    </div>
+                    <div>
+                        <label for="new_pwd">新密码</label>
+                        <input type="password" id="new_pwd" name="new_pwd" class="form-control" required>
+                    </div>
+                    <div>
+                        <label for="confirm_pwd">确认新密码</label>
+                        <input type="password" id="confirm_pwd" name="confirm_pwd" class="form-control" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-default">修改密码</button>
+            </form>
+        </div>
+
+        <!-- 留言管理 -->
+        <div class="card">
+            <h2 style="margin-bottom:20px;">留言管理（共 {{ messages|length }} 条）</h2>
+            
+            {% if messages %}
+                {% for msg in messages %}
+                <div class="message-item" id="msg-{{ msg.id }}">
+                    <div class="message-header">
+                        <div>
+                            <strong>ID: {{ msg.id }}</strong> | 
+                            {{ msg.name }} | 
+                            {{ msg.time }} | 
+                            {{ msg.location }} ({{ msg.ip }})
+                            {% if msg.visible %}
+                            <span style="color:green;">[前台显示]</span>
+                            {% else %}
+                            <span style="color:red;">[前台隐藏]</span>
+                            {% endif %}
+                        </div>
+                        <div>点赞数: {{ msg.likes }}</div>
+                    </div>
+                    
+                    <div class="message-content">{{ msg.content_html|safe }}</div>
+                    
+                    {% if msg.images %}
+                    <div class="msg-images">
+                        {% for img in msg.images %}
+                        <div class="msg-image-item">
+                            <img src="{{ img }}" alt="留言图片" onclick="window.open('{{ img }}', '_blank')">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if msg.replies %}
+                    <div style="margin-top:10px;">
+                        <strong>管理员回复：</strong>
+                        {% for reply in msg.replies %}
+                        <div style="background:#f1f1f1;padding:8px;border-radius:4px;margin-top:5px;">
+                            {{ reply.content_html|safe }} <small style="color:#999;">{{ reply.time }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- 操作按钮组 -->
+                    <div class="btn-group" style="margin-top:15px;">
+                        <form method="post" style="margin:0;">
+                            <input type="hidden" name="reply_msg" value="{{ msg.id }}">
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="text" name="reply_content" class="form-control" placeholder="输入回复内容" style="width:200px;">
+                                <button type="submit" class="btn btn-purple">提交回复</button>
+                            </div>
+                        </form>
+                        
+                        <a href="/admin?toggle_visible={{ msg.id }}" class="btn {% if msg.visible %}btn-red{% else %}btn-green{% endif %}">
+                            {% if msg.visible %}前台不显{% else %}前台显示{% endif %}
+                        </a>
+                        
+                        <a href="/admin/logs/{{ msg.id }}" class="btn btn-gray">邮件日志</a>
+                        
+                        <form method="post" style="margin:0;display:flex;gap:8px;align-items:center;">
+                            <input type="hidden" name="set_like" value="{{ msg.id }}">
+                            <input type="number" name="like_count" class="form-control" value="{{ msg.likes }}" min="0" style="width:60px;">
+                            <button type="submit" class="btn btn-blue">修改点赞</button>
+                        </form>
+                        
+                        <form method="post" style="margin:0;" onsubmit="return confirm('确定删除这条留言？删除后不可恢复！');">
+                            <input type="hidden" name="delete_msg" value="{{ msg.id }}">
+                            <button type="submit" class="btn btn-orange">删除留言</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center;padding:20px;">暂无留言</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0;">
+            <h1>邮件发送日志</h1>
+            <a href="/admin" class="btn btn-default">返回后台</a>
+        </div>
+        
+        <div class="card">
+            {% if logs %}
+                {% for log in logs|reverse %}
+                <div style="background:#f8f9fa;padding:15px;border-radius:8px;margin-bottom:10px;">
+                    <div><strong>留言ID：</strong>{{ log.msg_id }}</div>
+                    <div><strong>留言人：</strong>{{ log.name }}</div>
+                    <div><strong>时间：</strong>{{ log.time }}</div>
+                    <div><strong>状态：</strong>{% if log.success %}<span style="color:green;">✅ 发送成功</span>{% else %}<span style="color:red;">❌ 发送失败</span>{% endif %}</div>
+                    <div><strong>信息：</strong>{{ log.message }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center;padding:20px;">暂无邮件日志</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

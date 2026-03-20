@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h1>管理员登录</h1>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="flash">{{ msg }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form method="post">
+                <div class="form-group">
+                    <label for="password">管理员密码</label>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="默认密码：123456">
+                </div>
+                <button type="submit" class="btn btn-default">登录</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

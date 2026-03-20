@@ -1,0 +1,9 @@
+[
+  {
+    "msg_id": 1773686029,
+    "name": "123123",
+    "time": "2026-03-16 18:33:49",
+    "success": false,
+    "message": "邮件发送失败：unsupported format character ';' (0x3b) at index 678"
+  }
+]
