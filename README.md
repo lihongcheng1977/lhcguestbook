@@ -104,10 +104,10 @@ docker logs lhcguestbook
 ### 访问地址
 
 - 前台页面：http://服务器IP:20000
-- index_page.png
+- [index_page.png](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/index_page.png)
 
 - 后台管理页面：http://服务器IP:20000/login
-- admin_page.png
+- [admin_page.png](https://raw.githubusercontent.com/lihongcheng1977/lhcguestbook/main/admin_page.png)
 
 ## 🔧 初始配置（首次使用）
 
