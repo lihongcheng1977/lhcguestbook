@@ -256,4 +256,4 @@ lhcguestbook/
 Git Hua 仓库上传说明：将本README.md文件与项目所有代码（app.py、templates目录、static目录）一起上传，部署时直接执行Docker命令即可快速启动。
 
 Word版说明：将本Markdown内容全选复制，粘贴到Word文档中，可自动保留格式（标题、列表、代码块等），无需额外调整。
-> （注：文档部分内容可能由 AI 生成）
+
