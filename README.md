@@ -75,17 +75,30 @@
 ### 部署命令
 
 ```bash
-# 1. 创建数据持久化目录（用于存储留言、配置、图片、日志）
-mkdir -p ~/lhcguestbook-data/data ~/lhcguestbook-data/static
 
-# 2. 启动Docker容器（映射20000端口，挂载数据目录）
+# 1. 创建数据持久化目录（解决权限问题，适配Linux/macOS/Git Bash）
+mkdir -p ~/lhcguestbook-data/data ~/lhcguestbook-data/static
+chmod -R 777 ~/lhcguestbook-data  # 测试环境赋予全权限，生产环境可调整
+
+# 2. 停止并删除旧容器（避免端口/名称冲突，无旧容器时报错可忽略）
+docker stop lhcguestbook || true && docker rm lhcguestbook || true
+
+# 3. 拉取最新镜像（从Docker Hub，确保用最新版本）
+docker pull wwwlhc/lhcguestbook:latest
+
+# 4. 启动容器（核心：使用Docker Hub的镜像，映射20000端口，挂载数据目录）
 docker run -d --name lhcguestbook -p 20000:5000 \
   -v ~/lhcguestbook-data/data:/app/data \
   -v ~/lhcguestbook-data/static:/app/static \
-  lhcguestbook
+  --restart=always \  # 可选：容器崩溃自动重启，增强稳定性
+  wwwlhc/lhcguestbook:latest
 
-# 3. 查看容器运行状态（确认无报错）
+# 5. 查看容器状态和日志（验证启动是否成功）
+echo "===== 容器运行状态 ====="
+docker ps | grep lhcguestbook
+echo -e "\n===== 容器启动日志 ====="
 docker logs lhcguestbook
+
 ```
 
 ### 访问地址
